@@ -6,6 +6,7 @@ declare global {
   namespace Express {
     interface Request {
       admin?: string;
+      user?: string;
     }
   }
 }

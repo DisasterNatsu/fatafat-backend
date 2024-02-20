@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { TokenVerifyType } from "../../../types/typings";
 
 const prisma = new PrismaClient();
 
@@ -94,5 +95,32 @@ export const AdminLogIn = async (req: Request, res: Response) => {
       .json({ message: "Something happened while logging in", error });
   } finally {
     return async () => await prisma.$disconnect();
+  }
+};
+
+export const AdminTokenVarification = (req: Request, res: Response) => {
+  // get token
+
+  const token = req.header("ff-admin-token");
+
+  // if no token
+
+  if (!token) return res.status(403).json({ message: "Unauthorised" });
+
+  try {
+    // it returns the issuedAt, ExpiresAt and the email used to sign it | if not a valid token, it will trigger the catch block
+
+    const isAuth = jwt.verify(
+      token,
+      process.env.ADMIN_JWT_SECRET!
+    ) as TokenVerifyType;
+
+    return res.status(200).json({ authenticated: true, admin: isAuth });
+  } catch (error) {
+    return res.status(500).json({
+      authenticated: false,
+      message: "Something happened when verifying admin data",
+      error,
+    });
   }
 };

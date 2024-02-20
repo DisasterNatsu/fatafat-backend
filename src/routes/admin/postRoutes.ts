@@ -5,10 +5,15 @@ import {
   AddDataNewDataRow,
   updateOrAddDatatoAlreadyExistingRow,
 } from "controllers/admin/addNewData";
-import { AdminLogIn, AdminRegister } from "auth/admin/AdminAuth";
+import {
+  AdminLogIn,
+  AdminRegister,
+  AdminTokenVarification,
+} from "auth/admin/AdminAuth";
 
 const router = express.Router();
 
+router.get("/is-auth", AdminTokenVarification);
 router.post("/register", AdminRegister);
 router.post("/log-in", AdminLogIn);
 router.post("/add-new", isAuth, AddDataNewDataRow);
